@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 import importlib
 from rclpy_message_converter import json_message_converter
-from mqtt_module.mqtt_module import MQTTClient  # MQTTClient는 여기서 선언
+from .mqtt_module.mqtt_module import MQTTClient  # MQTTClient는 여기서 선언
 
 class Short_Topic_Connector(Node):
     def __init__(self, broker_host, broker_port, mqtt_topic, platform, ros_topic, ros_type, mode):
