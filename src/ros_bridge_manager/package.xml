@@ -7,6 +7,11 @@
   <maintainer email="cknam0708@sju.ac.kr">nam</maintainer>
   <license>TODO: License declaration</license>
 
+  <!-- 실행 시 필요한 의존성 추가 -->
+  <exec_depend>short_topic_connector</exec_depend>
+  <exec_depend>huge_data_connector</exec_depend>
+
+  <!-- 테스트 의존성 -->
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
