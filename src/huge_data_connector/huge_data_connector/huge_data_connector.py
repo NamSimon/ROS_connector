@@ -15,7 +15,7 @@ class Huge_data_Connector(Node):
         self.stream_topic = stream_topic  # GStreamer 송신 스트림 토픽
 
         # GStreamer URI에서 토픽명으로 대체
-        self.gstreamer_uri = f'{gstreamer_base_uri}?streamid=live.sls/live/{stream_topic}'
+       
 
         # CvBridge 객체 생성 (이미지 변환을 위해)
         self.bridge = CvBridge()
@@ -29,19 +29,20 @@ class Huge_data_Connector(Node):
 
         # 플랫폼 및 모드 설정에 따라 동작 분기
         if self.platform == 'edge':
-            if self.mode == 'pub':
+            if self.mode == 'sub':
                 # ROS에서 수신한 데이터를 GStreamer로 송출
-                self.get_logger().info("모드: pub - ROS 구독 후 GStreamer로 스트림 전송")
+                self.get_logger().info(f"모드: sub - GStreamer 수신 후 ROS 퍼블리시")
                 self.ros_subscription = self.create_subscription(
                     self.ros_msg_type, self.ros2gstreamer_ros_topic, self.ros_to_gstreamer_callback, 10)
-
+                self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=publish:{stream_topic}&pkt_size=1316'
                 # GStreamer 송신 파이프라인 시작
-                self.gstreamer_sender = GStreamerSender(self.stream_topic)
+                self.gstreamer_sender = GStreamerSender(self.gstreamer_uri)
                 self.gstreamer_sender.start_pipeline()
 
-            elif self.mode == 'sub':
+            elif self.mode == 'pub':
                 # GStreamer에서 데이터를 수신한 후 ROS로 퍼블리시
-                self.get_logger().info(f"모드: sub - GStreamer 수신 후 ROS 퍼블리시")
+                self.get_logger().info("모드: pub - ROS 구독 후 GStreamer로 스트림 전송")
+                self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=read:{stream_topic}&pkt_size=1316'
                 self.gstreamer_receiver = GStreamerReceiver(self.gstreamer_uri)
                 self.gstreamer_receiver.start_pipeline()
 
@@ -57,16 +58,17 @@ class Huge_data_Connector(Node):
 
         elif self.platform == 'user':
             if self.mode == 'pub':
-                self.get_logger().info("모드: pub - ROS 구독 후 GStreamer로 스트림 전송 (user 플랫폼)")
+                self.get_logger().info("모드: pub - ROS 구독 후 GStreamer로 스트림 전송")
                 self.ros_subscription = self.create_subscription(
                     self.ros_msg_type, self.ros2gstreamer_ros_topic, self.ros_to_gstreamer_callback, 10)
-
+                self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=publish:{stream_topic}&pkt_size=1316'
                 # GStreamer 송신 파이프라인 시작
-                self.gstreamer_sender = GStreamerSender(self.stream_topic)
+                self.gstreamer_sender = GStreamerSender(self.gstreamer_uri)
                 self.gstreamer_sender.start_pipeline()
 
             elif self.mode == 'sub':
-                self.get_logger().info(f"모드: sub - GStreamer 수신 후 ROS 퍼블리시 (user 플랫폼)")
+                self.get_logger().info(f"모드: sub - GStreamer 수신 후 ROS 퍼블리시")
+                self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=read:{stream_topic}&pkt_size=1316'
                 self.gstreamer_receiver = GStreamerReceiver(self.gstreamer_uri)
                 self.gstreamer_receiver.start_pipeline()
 

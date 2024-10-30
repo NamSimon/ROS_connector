@@ -2,8 +2,8 @@ import subprocess
 import numpy as np
 
 class GStreamerSender:
-    def __init__(self, stream_topic):
-        self.stream_topic = stream_topic
+    def __init__(self, gstreamer_uri):
+        self.gstreamer_uri = gstreamer_uri
         self.gstreamer_process = None
 
     def start_pipeline(self):
@@ -15,7 +15,7 @@ class GStreamerSender:
             '!', 'videoconvert',
             '!', 'x264enc',
             '!', 'mpegtsmux',
-            '!', 'srtsink', f'uri=srt://203.250.148.119:20541?streamid=live.sls/live/{self.stream_topic}'
+            '!', 'srtsink', f'uri={self.gstreamer_uri}'
         ]
 
         try:
@@ -47,7 +47,7 @@ class GStreamerReceiver:
         """GStreamer 수신 파이프라인을 시작합니다."""
         gstreamer_command = [
             'gst-launch-1.0',
-            'srtsrc', f'uri={self.gstreamer_uri}',
+            'srtsink', f'uri={self.gstreamer_uri}',
             '!', 'tsdemux',
             '!', 'h264parse',
             '!', 'avdec_h264',
