@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.executors import MultiThreadedExecutor
-from short_topic_connector import Short_Topic_Connector
-from huge_data_connector import Huge_data_Connector  # Assuming this is in a file called huge_data_connector.py
+from short_topic_connector.short_topic_connector import Short_Topic_Connector
+from huge_data_connector.huge_data_connector import Huge_data_Connector  # Assuming this is in a file called huge_data_connector.py
 import os
 
 class ROSBridgeManager:

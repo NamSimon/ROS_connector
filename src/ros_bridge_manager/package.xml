@@ -8,8 +8,8 @@
   <license>TODO: License declaration</license>
 
   <!-- 실행 시 필요한 의존성 추가 -->
-  <exec_depend>short_topic_connector</exec_depend>
-  <exec_depend>huge_data_connector</exec_depend>
+  <depend>short_topic_connector</depend>
+  <depend>huge_data_connector</depend>
 
   <!-- 테스트 의존성 -->
   <test_depend>ament_copyright</test_depend>
