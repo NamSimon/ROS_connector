@@ -33,7 +33,7 @@ class ROSBridgeManager:
                 ros_type=config['ros_type'],
                 mode=config['mode'],
                 stream_topic=config['stream_topic'],
-                gstreamer_base_uri=config.get('gstreamer_base_uri', os.getenv('GSTREAMER_BASE_URI'))
+                gstreamer_base_uri=f"{os.getenv('MEDIA_HOST')}:{os.getenv('MEDIA_PORT')}"
             )
 
         self.bridges.append(bridge_node)
@@ -61,25 +61,18 @@ def main():
     bridges_config = [
         {
             'type': 'short_topic',
-            'ros_topic': '/topic_1',
-            'ros_type': 'std_msgs/String',
+            'ros_topic': '/cmd_vel',
+            'ros_type': 'geometry_msgs/Twist',
             'mode': 'pub',
-            'mqtt_topic': 'mqtt/topic_1',
-        },
-        {
-            'type': 'short_topic',
-            'ros_topic': '/topic_2',
-            'ros_type': 'sensor_msgs/Imu',
-            'mode': 'sub',
-            'mqtt_topic': 'mqtt/topic_2',
+            'mqtt_topic': 'cmd_velmqtt',
         },
         {
             'type': 'huge_topic',
-            'ros_topic': '/camera/image_raw',
+            'ros_topic': '/front_stereo_camera/left/image_rect_color',
             'ros_type': 'sensor_msgs/Image',
-            'mode': 'pub',
-            'stream_topic': 'stream_topic_1',
-            'gstreamer_base_uri': 'rtsp://example.com/live',
+            'mode': 'sub',
+            'stream_topic': '/front_stereo_camera/left/image_rect_colormqtt',
+            
         },
         # 추가 브리지 설정 가능
     ]
