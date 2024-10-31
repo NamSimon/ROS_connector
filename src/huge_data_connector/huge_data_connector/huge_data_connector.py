@@ -2,11 +2,11 @@ import rclpy
 from rclpy.node import Node
 import importlib
 from cv_bridge import CvBridge
-from streaming_module.streaming_module import GStreamerSender, GStreamerReceiver
+from huge_data_connector.streaming_module.streaming_module import GStreamerSender, GStreamerReceiver
 
 class Huge_data_Connector(Node):
     def __init__(self, platform, ros_topic, ros_type, mode, stream_topic=None, gstreamer_base_uri=None):
-        super().__init__(f'ros2streaming_bridge_{stream_topic}')
+        super().__init__(f'ros2streaming_bridge_{stream_topic.replace("/", "_")}')
 
         self.platform = platform  # 플랫폼 이름 (edge 또는 user)
         self.ros2gstreamer_ros_topic = ros_topic  # ROS 토픽 이름
@@ -36,7 +36,7 @@ class Huge_data_Connector(Node):
                     self.ros_msg_type, self.ros2gstreamer_ros_topic, self.ros_to_gstreamer_callback, 10)
                 self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=publish:{stream_topic}&pkt_size=1316'
                 # GStreamer 송신 파이프라인 시작
-                self.gstreamer_sender = GStreamerSender(self.gstreamer_uri)
+                self.gstreamer_sender = GStreamerSender(self.gstreamer_uri, self.stream_topic)
                 self.gstreamer_sender.start_pipeline()
 
             elif self.mode == 'pub':
@@ -63,7 +63,7 @@ class Huge_data_Connector(Node):
                     self.ros_msg_type, self.ros2gstreamer_ros_topic, self.ros_to_gstreamer_callback, 10)
                 self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=publish:{stream_topic}&pkt_size=1316'
                 # GStreamer 송신 파이프라인 시작
-                self.gstreamer_sender = GStreamerSender(self.gstreamer_uri)
+                self.gstreamer_sender =  GStreamerSender(self.gstreamer_uri, self.stream_topic)
                 self.gstreamer_sender.start_pipeline()
 
             elif self.mode == 'sub':

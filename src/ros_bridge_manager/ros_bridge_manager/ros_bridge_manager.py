@@ -57,7 +57,7 @@ class ROSBridgeManager:
 
 def main():
     rclpy.init()
-
+    
     bridges_config = [
         {
             'type': 'short_topic',
