@@ -34,7 +34,7 @@ class Huge_data_Connector(Node):
                 self.get_logger().info(f"모드: sub - GStreamer 수신 후 ROS 퍼블리시")
                 self.ros_subscription = self.create_subscription(
                     self.ros_msg_type, self.ros2gstreamer_ros_topic, self.ros_to_gstreamer_callback, 10)
-                self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=publish:{stream_topic}&pkt_size=1316'
+                self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=live.sls/live/{stream_topic}'
                 # GStreamer 송신 파이프라인 시작
                 self.gstreamer_sender = GStreamerSender(self.gstreamer_uri, self.stream_topic)
                 self.gstreamer_sender.start_pipeline()
@@ -42,7 +42,7 @@ class Huge_data_Connector(Node):
             elif self.mode == 'pub':
                 # GStreamer에서 데이터를 수신한 후 ROS로 퍼블리시
                 self.get_logger().info("모드: pub - ROS 구독 후 GStreamer로 스트림 전송")
-                self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=read:{stream_topic}&pkt_size=1316'
+                self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=uplive.sls/live/{stream_topic}'
                 self.gstreamer_receiver = GStreamerReceiver(self.gstreamer_uri)
                 self.gstreamer_receiver.start_pipeline()
 
@@ -68,7 +68,7 @@ class Huge_data_Connector(Node):
 
             elif self.mode == 'sub':
                 self.get_logger().info(f"모드: sub - GStreamer 수신 후 ROS 퍼블리시")
-                self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=read:{stream_topic}&pkt_size=1316'
+                self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=live.sls/live/{stream_topic}'
                 self.gstreamer_receiver = GStreamerReceiver(self.gstreamer_uri)
                 self.gstreamer_receiver.start_pipeline()
 

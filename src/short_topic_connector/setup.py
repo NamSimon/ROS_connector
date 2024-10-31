@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-           
+           'short_topic_connector = short_topic_connector.short_topic_connector:main',
         ],
     },
 )

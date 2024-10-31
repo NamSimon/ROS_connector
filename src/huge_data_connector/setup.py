@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'huge_data_connector = huge_data_connector.huge_data_connector',
         ],
     },
 )

@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-             'ros_bridge_manager = ros_bridge_manager.ros_bridge_manager:main',
+            'ros_bridge_manager = ros_bridge_manager:main',
         ],
     },
 )
