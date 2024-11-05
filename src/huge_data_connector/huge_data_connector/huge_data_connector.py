@@ -33,7 +33,7 @@ class Huge_data_Connector(Node):
                 # ROS에서 수신한 데이터를 GStreamer로 송출
                 self.get_logger().info(f"모드: sub - GStreamer 수신 후 ROS 퍼블리시")
                 self.ros_subscription = self.create_subscription(
-                    self.ros_msg_type, self.ros2gstreamer_ros_topic, self.ros_to_gstreamer_callback, 10)
+                    self.ros_msg_type, self.ros2gstreamer_ros_topic, self.ros_to_gstreamer_callback, 1)
                 self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=live.sls/live/{stream_topic}'
                 # GStreamer 송신 파이프라인 시작
                 self.gstreamer_sender = GStreamerSender(self.gstreamer_uri, self.stream_topic)
@@ -48,10 +48,10 @@ class Huge_data_Connector(Node):
 
                 # 퍼블리셔 생성 (수신한 데이터를 ROS로 퍼블리시)
                 self.ros_publisher = self.create_publisher(
-                    self.ros_msg_type, self.ros2gstreamer_ros_topic, 10)
+                    self.ros_msg_type, self.ros2gstreamer_ros_topic, 1)
 
                 # 주기적으로 GStreamer로부터 프레임을 수신하여 ROS로 퍼블리시
-                self.timer = self.create_timer(0.1, self.receive_and_publish_frame)
+                self.timer = self.create_timer(0.001, self.receive_and_publish_frame)
             else:
                 self.get_logger().error("올바르지 않은 모드 설정. 'pub' 또는 'sub'만 허용됩니다.")
                 return
@@ -60,7 +60,7 @@ class Huge_data_Connector(Node):
             if self.mode == 'pub':
                 self.get_logger().info("모드: pub - ROS 구독 후 GStreamer로 스트림 전송")
                 self.ros_subscription = self.create_subscription(
-                    self.ros_msg_type, self.ros2gstreamer_ros_topic, self.ros_to_gstreamer_callback, 10)
+                    self.ros_msg_type, self.ros2gstreamer_ros_topic, self.ros_to_gstreamer_callback, 1)
                 self.gstreamer_uri = f'srt://{gstreamer_base_uri}?streamid=publish:{stream_topic}&pkt_size=1316'
                 # GStreamer 송신 파이프라인 시작
                 self.gstreamer_sender =  GStreamerSender(self.gstreamer_uri, self.stream_topic)
@@ -74,7 +74,7 @@ class Huge_data_Connector(Node):
 
                 # 퍼블리셔 생성 (수신한 데이터를 ROS로 퍼블리시)
                 self.ros_publisher = self.create_publisher(
-                    self.ros_msg_type, self.ros2gstreamer_ros_topic, 10)
+                    self.ros_msg_type, self.ros2gstreamer_ros_topic, 1)
 
                 # 주기적으로 GStreamer로부터 프레임을 수신하여 ROS로 퍼블리시
                 self.timer = self.create_timer(0.1, self.receive_and_publish_frame)
