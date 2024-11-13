@@ -1,77 +1,82 @@
-import subprocess
-import numpy as np
+import cv2
 
 class GStreamerSender:
-    def __init__(self, gstreamer_uri, stream_topic=None):
+    def __init__(self, gstreamer_uri, width=640, height=480, fps=30):
         self.gstreamer_uri = gstreamer_uri
-        self.stream_topic = stream_topic  # stream_topic 속성 추가
-        self.gstreamer_process = None
+        self.width = int(width)
+        self.height = int(height)
+        self.fps = fps
+        self.video_writer = None
 
     def start_pipeline(self):
-        """GStreamer 송신 파이프라인을 시작합니다."""
-        gstreamer_command = [
-            'gst-launch-1.0',
-            'appsrc', 'format=GST_FORMAT_TIME', 'is-live=true', 'block=true',
-            'caps=video/x-raw,format=BGR,width=640,height=480,framerate=30/1',
-            '!', 'videoconvert',
-            '!', 'x264enc',
-            '!', 'mpegtsmux',
-            '!', 'srtsink', f'uri={self.gstreamer_uri}'
-        ]
+        gst_pipeline = (
+            f"appsrc ! "
+            f"videoconvert ! "
+            f"x264enc bitrate=10000 speed-preset=ultrafast tune=zerolatency ! "
+            f"mpegtsmux ! "
+            f"srtsink uri={self.gstreamer_uri}"
+        )
 
-        try:
-            self.gstreamer_process = subprocess.Popen(gstreamer_command, stdin=subprocess.PIPE)
-            print(f"GStreamer 송신 파이프라인 시작됨. 스트림 토픽: {self.stream_topic}")
-        except Exception as e:
-            print(f"GStreamer 송신 파이프라인 시작 실패: {e}")
+        # OpenCV VideoWriter 초기화 (수정된 부분)
+        self.video_writer = cv2.VideoWriter(
+            gst_pipeline,
+            apiPreference=cv2.CAP_GSTREAMER,
+            fourcc=0,
+            fps=self.fps,
+            frameSize=(self.width, self.height),
+            isColor=True
+        )
+
+        if not self.video_writer.isOpened():
+            print("Error: Unable to open GStreamer pipeline for streaming.")
+            return False
+
+        print("GStreamer pipeline started successfully.")
+        return True
 
     def send_frame(self, frame):
-        """OpenCV 이미지를 GStreamer로 전송."""
-        try:
-            if self.gstreamer_process and self.gstreamer_process.stdin:
-                self.gstreamer_process.stdin.write(frame.tobytes())
-        except Exception as e:
-            print(f"GStreamer로 이미지 전송 실패: {e}")
+        if self.video_writer and self.video_writer.isOpened():
+            self.video_writer.write(frame)
+        else:
+            print("Error: VideoWriter is not opened.")
 
     def stop(self):
-        """GStreamer 송신 파이프라인을 종료."""
-        if self.gstreamer_process:
-            self.gstreamer_process.terminate()
+        if self.video_writer:
+            self.video_writer.release()
+            print("GStreamer pipeline stopped.")
 
 
 class GStreamerReceiver:
-    def __init__(self, gstreamer_uri):
+    def __init__(self, gstreamer_uri, width=640, height=480):
         self.gstreamer_uri = gstreamer_uri
-        self.gstreamer_process = None
+        self.width = int(width)
+        self.height = int(height)
+        self.video_capture = None
 
     def start_pipeline(self):
-        """GStreamer 수신 파이프라인을 시작합니다."""
-        gstreamer_command = [
-            'gst-launch-1.0',
-            'srtsrc', f'uri={self.gstreamer_uri}',
-            '!', 'tsdemux',
-            '!', 'h264parse',
-            '!', 'avdec_h264',
-            '!', 'videoconvert',
-            '!', 'appsink'
-        ]
+        gst_pipeline = (
+            f"srtsrc uri={self.gstreamer_uri} ! "
+            f"tsdemux ! h264parse ! avdec_h264 ! "
+            f"videoconvert ! appsink"
+        )
 
-        try:
-            self.gstreamer_process = subprocess.Popen(gstreamer_command, stdout=subprocess.PIPE)
-            print(f"GStreamer 수신 파이프라인 시작됨.")
-        except Exception as e:
-            print(f"GStreamer 수신 파이프라인 시작 실패: {e}")
+        self.video_capture = cv2.VideoCapture(gst_pipeline, cv2.CAP_GSTREAMER)
+
+        if not self.video_capture.isOpened():
+            print("Error: Unable to open GStreamer pipeline for receiving.")
+            return False
+
+        print("GStreamer receiver pipeline started successfully.")
+        return True
 
     def receive_frame(self):
-        """GStreamer로부터 프레임을 수신하고 OpenCV 이미지로 변환."""
-        frame_data = self.gstreamer_process.stdout.read(640 * 480 * 3)  # BGR 3채널 (640x480)
-        if not frame_data:
-            return None
-
-        frame = np.frombuffer(frame_data, dtype=np.uint8).reshape((480, 640, 3))
-        return frame
+        if self.video_capture and self.video_capture.isOpened():
+            ret, frame = self.video_capture.read()
+            if ret:
+                return frame
+        return None
 
     def stop(self):
-        """GStreamer 수신 파이프라인을 종료."""
-        if self.gstreamer_process:
-            self.gstreamer_process.terminate()
+        if self.video_capture:
+            self.video_capture.release()
+            print("GStreamer receiver pipeline stopped.")
