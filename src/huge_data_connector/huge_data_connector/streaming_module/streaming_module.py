@@ -36,7 +36,8 @@ class GStreamerSender:
 
     def send_frame(self, frame):
         if self.video_writer and self.video_writer.isOpened():
-            self.video_writer.write(frame)
+            resized_frame=cv2.resize(frame,(self.width,self.height))
+            self.video_writer.write(resized_frame)
         else:
             print("Error: VideoWriter is not opened.")
 
