@@ -9,14 +9,13 @@ from huge_data_connector.streaming_module.streaming_module import GStreamerSende
 import cv2
 
 class Huge_data_Connector(Node):
-    def __init__(self, platform, ros_topic, ros_type, mode, stream_topic=None, gstreamer_base_uri=None, width=640, height=480):
-        super().__init__(f'ros2streaming_bridge_{stream_topic.replace("/", "_")}')
+    def __init__(self, platform, ros_topic, ros_type, mode, gstreamer_base_uri=None, width=640, height=480):
+        super().__init__(f'ros2streaming_bridge_{ros_topic.replace("/", "_")}')
 
         self.platform = platform
         self.ros2gstreamer_ros_topic = ros_topic
         self.ros2gstreamer_ros_type = ros_type
         self.mode = mode
-        self.stream_topic = stream_topic
         self.gstreamer_base_uri = gstreamer_base_uri
         self.width = width
         self.height = height
@@ -63,13 +62,13 @@ class Huge_data_Connector(Node):
                 self.setup_gstreamer_receiver()
 
     def setup_gstreamer_sender(self):
-        self.gstreamer_uri = f'srt://{self.gstreamer_base_uri}?streamid=uplive.sls/live{self.stream_topic}'
+        self.gstreamer_uri = f'srt://{self.gstreamer_base_uri}?streamid=uplive.sls/live{self.ros2gstreamer_ros_topic}'
         # width와 height 값을 전달
         self.gstreamer_sender = GStreamerSender(self.gstreamer_uri, width=self.width, height=self.height)
         self.gstreamer_sender.start_pipeline()
 
     def setup_gstreamer_receiver(self):
-        self.gstreamer_uri = f'srt://{self.gstreamer_base_uri}?streamid=live.sls/live{self.stream_topic}'
+        self.gstreamer_uri = f'srt://{self.gstreamer_base_uri}?streamid=live.sls/live{self.ros2gstreamer_ros_topic}'
         self.gstreamer_receiver = GStreamerReceiver(self.gstreamer_uri)
         self.gstreamer_receiver.start_pipeline()
 

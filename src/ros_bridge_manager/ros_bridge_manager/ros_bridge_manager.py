@@ -19,7 +19,6 @@ class ROSBridgeManager:
             bridge_node = Short_Topic_Connector(
                 broker_host=os.getenv('BROKER_HOST'),
                 broker_port=int(os.getenv('BROKER_PORT')),
-                mqtt_topic=config['mqtt_topic'],
                 platform=config.get('platform', os.getenv('PLATFORM')),
                 ros_topic=config['ros_topic'],
                 ros_type=config['ros_type'],
@@ -32,7 +31,6 @@ class ROSBridgeManager:
                 ros_topic=config['ros_topic'],
                 ros_type=config['ros_type'],
                 mode=config['mode'],
-                stream_topic=config['stream_topic'],
                 gstreamer_base_uri=f"{os.getenv('MEDIA_HOST')}:{os.getenv('MEDIA_PORT')}"
             )
 

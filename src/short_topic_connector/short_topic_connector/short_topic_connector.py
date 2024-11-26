@@ -4,7 +4,7 @@ import importlib
 from rclpy_message_converter import json_message_converter
 from short_topic_connector.mqtt_module.mqtt_module import MQTTClient
 class Short_Topic_Connector(Node):
-    def __init__(self, broker_host, broker_port, mqtt_topic, platform, ros_topic, ros_type, mode):
+    def __init__(self, broker_host, broker_port, platform, ros_topic, ros_type, mode):
         super().__init__(f'short_topic_bridge_{ros_topic.replace("/", "_")}')
 
         self.platform = platform  # 플랫폼 이름
@@ -19,7 +19,7 @@ class Short_Topic_Connector(Node):
         self.mqtt_client = MQTTClient(
             broker_host=broker_host,
             broker_port=broker_port,
-            mqtt_topic=mqtt_topic,
+            mqtt_topic=ros_topic,
             on_message_callback=self.on_mqtt_message_received
         )
 
