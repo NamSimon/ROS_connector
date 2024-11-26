@@ -55,25 +55,25 @@ class ROSBridgeManager:
 
 def main():
     rclpy.init()
-    
-    bridges_config = [
-        {
-            'type': 'short_topic',
-            'ros_topic': '/cmd_vel',
-            'ros_type': 'geometry_msgs/Twist',
-            'mode': 'pub',
-            'mqtt_topic': 'cmd_velmqtt',
-        },
-        {
-            'type': 'huge_topic',
-            'ros_topic': '/front_stereo_camera/left/image_rect_color',
-            'ros_type': 'sensor_msgs/Image',
-            'mode': 'sub',
-            'stream_topic': '/image_rect_colormqtt',
+    bridges_config=os.getenv('ROS_CONFIG')
+    # bridges_config = [
+    #     {
+    #         'type': 'short_topic',
+    #         'ros_topic': '/cmd_vel',
+    #         'ros_type': 'geometry_msgs/Twist',
+    #         'mode': 'pub',
+    #         'mqtt_topic': 'cmd_velmqtt',
+    #     },
+    #     {
+    #         'type': 'huge_topic',
+    #         'ros_topic': '/front_stereo_camera/left/image_rect_color',
+    #         'ros_type': 'sensor_msgs/Image',
+    #         'mode': 'sub',
+    #         'stream_topic': '/image_rect_colormqtt',
             
-        },
-        # 추가 브리지 설정 가능
-    ]
+    #     },
+    #     # 추가 브리지 설정 가능
+    # ]
 
     bridge_manager = ROSBridgeManager(bridges_config)
     bridge_manager.spin()
