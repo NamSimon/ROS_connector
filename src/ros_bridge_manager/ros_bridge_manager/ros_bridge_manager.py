@@ -3,7 +3,7 @@ from rclpy.executors import MultiThreadedExecutor
 from short_topic_connector.short_topic_connector import Short_Topic_Connector
 from huge_data_connector.huge_data_connector import Huge_data_Connector  # Assuming this is in a file called huge_data_connector.py
 import os
-
+import json
 class ROSBridgeManager:
     def __init__(self, bridges_config):
         self.bridges = []
@@ -55,15 +55,19 @@ class ROSBridgeManager:
 
 def main():
     rclpy.init()
+
+    # 환경 변수에서 ROS_CONFIG 가져오기
     bridges_config_str = os.getenv('ROS_CONFIG')
-    
+    if not bridges_config_str:
+        raise ValueError("ROS_CONFIG 환경 변수가 설정되지 않았습니다.")
+
+    # JSON 문자열을 Python 리스트로 변환
     try:
         bridges_config = json.loads(bridges_config_str)
-        logging.info(f"브리지 설정 로드 완료: {bridges_config}")
     except json.JSONDecodeError as e:
-        logging.error(f"ROS_CONFIG JSON 파싱 에러: {e}")
         raise ValueError(f"ROS_CONFIG JSON 파싱 에러: {e}")
 
+    # ROSBridgeManager 실행
     bridge_manager = ROSBridgeManager(bridges_config)
     bridge_manager.spin()
 
