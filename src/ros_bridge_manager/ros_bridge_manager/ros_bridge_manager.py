@@ -55,25 +55,14 @@ class ROSBridgeManager:
 
 def main():
     rclpy.init()
-    bridges_config=os.getenv('ROS_CONFIG')
-    # bridges_config = [
-    #     {
-    #         'type': 'short_topic',
-    #         'ros_topic': '/cmd_vel',
-    #         'ros_type': 'geometry_msgs/Twist',
-    #         'mode': 'pub',
-    #         'mqtt_topic': 'cmd_velmqtt',
-    #     },
-    #     {
-    #         'type': 'huge_topic',
-    #         'ros_topic': '/front_stereo_camera/left/image_rect_color',
-    #         'ros_type': 'sensor_msgs/Image',
-    #         'mode': 'sub',
-    #         'stream_topic': '/image_rect_colormqtt',
-            
-    #     },
-    #     # 추가 브리지 설정 가능
-    # ]
+    bridges_config_str = os.getenv('ROS_CONFIG')
+    
+    try:
+        bridges_config = json.loads(bridges_config_str)
+        logging.info(f"브리지 설정 로드 완료: {bridges_config}")
+    except json.JSONDecodeError as e:
+        logging.error(f"ROS_CONFIG JSON 파싱 에러: {e}")
+        raise ValueError(f"ROS_CONFIG JSON 파싱 에러: {e}")
 
     bridge_manager = ROSBridgeManager(bridges_config)
     bridge_manager.spin()
