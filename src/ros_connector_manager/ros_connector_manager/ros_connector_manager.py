@@ -3,8 +3,9 @@ from rclpy.executors import MultiThreadedExecutor
 from short_topic_connector.short_topic_connector import Short_Topic_Connector
 from huge_data_connector.huge_data_connector import Huge_data_Connector  # Assuming this is in a file called huge_data_connector.py
 import os
-import json
-class ROSBridgeManager:
+import ast  # JSON 대신 Python 형식 문자열 파싱용
+
+class ROSConnectorManager:
     def __init__(self, bridges_config):
         self.bridges = []
         self.executor = MultiThreadedExecutor()
@@ -61,15 +62,16 @@ def main():
     if not bridges_config_str:
         raise ValueError("ROS_CONFIG 환경 변수가 설정되지 않았습니다.")
 
-    # JSON 문자열을 Python 리스트로 변환
+    # Python 형식 문자열을 파싱
     try:
-        bridges_config = json.loads(bridges_config_str)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"ROS_CONFIG JSON 파싱 에러: {e}")
+        bridges_config = ast.literal_eval(bridges_config_str)  # JSON 대신 Python 파싱
+    except (ValueError, SyntaxError) as e:
+        print(f"ROS_CONFIG 값: {bridges_config_str}")
+        raise ValueError(f"ROS_CONFIG 파싱 에러: {e}")
 
     # ROSBridgeManager 실행
-    bridge_manager = ROSBridgeManager(bridges_config)
-    bridge_manager.spin()
+    connector_manager = ROSConnectorManager(bridges_config)
+    connector_manager.spin()
 
 if __name__ == '__main__':
     main()

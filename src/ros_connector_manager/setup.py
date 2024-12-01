@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'ros_bridge_manager'
+package_name = 'ros_connector_manager'
 
 setup(
     name=package_name,
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'ros_bridge_manager = ros_bridge_manager:main',
+            'ros_connector_manager = ros_connector_manager:main',
         ],
     },
 )
