@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'ros_connector_manager = ros_connector_manager:main',
+            'ros_connector_manager = ros_connector_manager.ros_connector_manager:main',
         ],
     },
 )
