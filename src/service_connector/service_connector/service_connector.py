@@ -6,7 +6,7 @@ from rclpy_message_converter import json_message_converter
 from rclpy.executors import ExternalShutdownException
 
 class Service_Connector(Node):
-    def __init__(self, broker_host,broker_port,ros_service,ros_type,mode):
+    def __init__(self, broker_host,broker_port,ros_service,ros_type,mode,platform):
         super().__init__(f'service_bridge_{ros_service.replace("/", "_")}')
 
         self.platform=platform
@@ -44,8 +44,8 @@ class Service_Connector(Node):
             elif self.mode == 'server':
                 self.srv=self.create_service(self.ros_srv_type,self.ros2mqtt_ros_service,self.ros_service_server_callback)
             else:
-              self.get_logger().error("올바르지 않은 모드 설정. 'server' 또는 'client'만 허용됩니다.")
-              return
+                self.get_logger().error("올바르지 않은 모드 설정. 'server' 또는 'client'만 허용됩니다.")
+                return
             
                     
         if self.platform=='user':
@@ -62,15 +62,15 @@ class Service_Connector(Node):
                 json_response=json_message_converter.convert_ros_message_to_json(self.ros_response)
                 self.mqtt_client_response.publish(json_response)
             else:
-              self.get_logger().error("올바르지 않은 모드 설정. 'server' 또는 'client'만 허용됩니다.")
-              return
+                self.get_logger().error("올바르지 않은 모드 설정. 'server' 또는 'client'만 허용됩니다.")
+                return
         
     def ros_service_server_callback(self,request,response):
             json_request=json_message_converter.convert_ros_message_to_json(request)
             self.mqtt_client_request.publish(json_request)
             self.mqtt_client_response.subscribe()
             response=self.ros_response
-        return response
+            return response
         
         
     def get_ros_srv_type(self, ros_type_name):

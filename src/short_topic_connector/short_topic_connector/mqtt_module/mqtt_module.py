@@ -20,7 +20,7 @@ class MQTTClient:
     def on_connect(self, client, userdata, flags, rc):
         """MQTT 브로커 연결 시 콜백 함수."""
         if rc == 0:
-            print("MQTT 브로커에 연결되었습니다.")
+            print("Topic MQTT 브로커에 연결되었습니다.")
         else:
             print(f"MQTT 브로커에 연결 실패: {rc}")
 

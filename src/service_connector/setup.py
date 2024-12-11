@@ -1,10 +1,10 @@
 from setuptools import find_packages, setup
 
-package_name = 'service_test'
+package_name = 'service_connector'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='0.0.1',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'service_connector = service_connector.service_connector:main',
+            'service_connector = service_connector.service_connector',
         ],
     },
 )
