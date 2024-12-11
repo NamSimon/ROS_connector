@@ -2,6 +2,7 @@ import rclpy
 from rclpy.executors import MultiThreadedExecutor
 from short_topic_connector.short_topic_connector import Short_Topic_Connector
 from huge_data_connector.huge_data_connector import Huge_data_Connector  # Assuming this is in a file called huge_data_connector.py
+from service_connector.service_connector import Service_Connector
 import os
 import ast  # JSON 대신 Python 형식 문자열 파싱용
 
@@ -33,6 +34,15 @@ class ROSConnectorManager:
                 ros_type=config['ros_type'],
                 mode=config['mode'],
                 gstreamer_base_uri=f"{os.getenv('MEDIA_HOST')}:{os.getenv('MEDIA_PORT')}"
+            )
+        elif config['type']== 'service':
+            bridge_node=Service_Connector(
+                broker_host=os.getenv('BROKER_HOST'),
+                broker_port=int(os.getenv('BROKER_PORT')),
+                platform=config.get('platform', os.getenv('PLATFORM')),
+                ros_service=config['ros_service'],
+                ros_type=config['ros_type'],
+                mode=config['mode']
             )
 
         self.bridges.append(bridge_node)
