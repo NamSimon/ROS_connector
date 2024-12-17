@@ -40,6 +40,7 @@ class Service_Connector(Node):
                     self.get_logger().info('서비스가 사용 가능하지 않습니다. 다시 대기 중...')
 
             elif self.mode == 'server':
+                self.mqtt_client_response.subscribe()
                 self.srv = self.create_service(self.ros_srv_type, self.ros2mqtt_ros_service, self.ros_service_server_callback)
             else:
                 self.get_logger().error("올바르지 않은 모드 설정. 'server' 또는 'client'만 허용됩니다.")
@@ -48,6 +49,7 @@ class Service_Connector(Node):
         # User 플랫폼 설정
         elif self.platform == 'user':
             if self.mode == 'client':
+                self.mqtt_client_response.subscribe()
                 self.srv = self.create_service(self.ros_srv_type, self.ros2mqtt_ros_service, self.ros_service_server_callback)
             elif self.mode == 'server':
                 self.mqtt_client_request.subscribe()
@@ -59,15 +61,47 @@ class Service_Connector(Node):
                 return
 
     def ros_service_server_callback(self, request, response):
+        self.get_logger().info("ROS 서비스 요청 수신")
+
+        # 요청을 JSON으로 변환하고 MQTT로 발행
         json_request = json_message_converter.convert_ros_message_to_json(request)
         self.mqtt_client_request.publish(json_request)
-        self.mqtt_client_response.subscribe()
-        response = self.ros_response
+        
+        # MQTT 응답 대기 (동기화)
+        self.ros_response = None  # 이전 값 초기화
+        event = threading.Event()  # 동기화 이벤트 객체
+
+        def on_response(json_response):
+            """MQTT로부터 응답을 수신했을 때 실행되는 콜백 함수"""
+            self.get_logger().info("MQTT 응답 수신")
+            self.ros_response = json_message_converter.convert_json_to_ros_message(
+                self.ros_srv_type.Response, json_response, 'response'
+            )
+            event.set()  # 이벤트 설정으로 대기 해제
+
+        # MQTT 응답 콜백 설정
+        self.mqtt_client_response.on_message_callback = on_response
+
+        # 응답 대기
+        self.get_logger().info("MQTT 응답 대기 중...")
+        if not event.wait(timeout=5.0):  # 5초 동안 응답을 기다림
+            self.get_logger().error("MQTT 응답 타임아웃")
+            return response  # 빈 응답 반환
+
+        # ROS 서비스의 response 객체 설정
+        if self.ros_response:  # MQTT 응답이 존재하면
+            # 응답 필드를 명확하게 설정 (사용 중인 서비스 타입에 맞게 수정 필요)
+            for field_name in self.ros_srv_type.Response.get_fields_and_field_types().keys():
+                setattr(response, field_name, getattr(self.ros_response, field_name))
+            self.get_logger().info("ROS 응답 객체 반환 준비 완료")
+        else:
+            self.get_logger().error("ROS 응답이 비어있습니다.")
+
         return response
 
     def get_ros_srv_type(self, ros_type_name):
         """ROS 메시지 타입을 동적으로 로드하는 함수."""
-        if '/srv/' in ros_type_name:
+        if '/srv/' in ros_type_name:s
             ros_type_name = ros_type_name.replace('/srv/', '/')
 
         package_name, srv_name = ros_type_name.split('/')
