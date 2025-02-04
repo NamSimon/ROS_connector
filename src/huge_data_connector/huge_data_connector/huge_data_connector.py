@@ -21,15 +21,16 @@ class Huge_data_Connector(Node):
         self.height = height
 
         self.bridge = CvBridge()
+        self.get_logger().info("CvBridge 생성 완료")
         self.ros_msg_type = self.get_ros_msg_type(self.ros2gstreamer_ros_type)
-
+        self.get_logger().info("ros_msg_type 생성 완료")
         self.gstreamer_sender = None
         self.gstreamer_receiver = None
         self.should_stop = threading.Event()
 
         # GStreamer 파이프라인 설정
         self.create_gstreamer_pipeline()
-
+        self.get_logger().info("GStreamer 파이프라인 생성 완료")
         # ROS 2 스피닝 스레드 시작
         self.spin_thread = threading.Thread(target=self.start_spin)
         self.spin_thread.start()
@@ -45,9 +46,11 @@ class Huge_data_Connector(Node):
             if self.mode == 'pub':
                 self.start_ros_subscription()
                 self.start_ros_to_gstreamer_thread()
+                self.get_logger().info("Success")
             elif self.mode == 'sub':
                 self.start_ros_publisher()
                 self.start_gstreamer_to_ros_thread()
+                self.get_logger().info("Success")
 
     def create_gstreamer_pipeline(self):
         if self.platform == 'edge':
