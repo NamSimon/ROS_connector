@@ -5,12 +5,12 @@ import threading  # threading 모듈 추가
 from service_connector.mqtt_module.mqtt_module import MQTTClient
 from rclpy_message_converter import json_message_converter
 from rclpy.executors import ExternalShutdownException
-
+import os
 class Service_Connector(Node):
-    def __init__(self, broker_host, broker_port, ros_service, ros_type, mode, platform):
+    def __init__(self, broker_host, broker_port, ros_service, ros_type, mode):
         super().__init__(f'service_bridge_{ros_service.replace("/", "_")}')
 
-        self.platform = platform
+        self.platform = os.getenv('PLATFORM')
         self.ros2mqtt_ros_service = ros_service
         self.ros2mqtt_ros_type = ros_type
         self.mode = mode

@@ -3,11 +3,12 @@ from rclpy.node import Node
 import importlib
 from rclpy_message_converter import json_message_converter
 from short_topic_connector.mqtt_module.mqtt_module import MQTTClient
+import os
 class Short_Topic_Connector(Node):
     def __init__(self, broker_host, broker_port, platform, ros_topic, ros_type, mode):
         super().__init__(f'short_topic_bridge_{ros_topic.replace("/", "_")}')
 
-        self.platform = platform  # 플랫폼 이름
+        self.platform =os.getenv('PLATFORM')# 플랫폼 이름
         self.ros2mqtt_ros_topic = ros_topic  # ROS 토픽 
         self.ros2mqtt_ros_type = ros_type  # ROS 메시지 타입
         self.mode = mode  # 모드 ('pub' 또는 'sub')

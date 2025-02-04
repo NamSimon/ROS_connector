@@ -7,12 +7,12 @@ import importlib
 from cv_bridge import CvBridge
 from huge_data_connector.streaming_module.streaming_module import GStreamerSender, GStreamerReceiver
 import cv2
-
+import os
 class Huge_data_Connector(Node):
-    def __init__(self, platform, ros_topic, ros_type, mode, gstreamer_base_uri=None, width=640, height=480):
+    def __init__(self, ros_topic, ros_type, mode, gstreamer_base_uri=None, width=640, height=480):
         super().__init__(f'ros2streaming_bridge_{ros_topic.replace("/", "_")}')
 
-        self.platform = platform
+        self.platform = os.getenv('PLATFORM')
         self.ros2gstreamer_ros_topic = ros_topic
         self.ros2gstreamer_ros_type = ros_type
         self.mode = mode

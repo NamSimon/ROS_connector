@@ -27,7 +27,7 @@ class ROSConnectorManager:
                 mode=config['mode']
             )
         # Huge_data_Connector 노드 생성
-        elif config['type'] == 'huge_topic':
+        if config['type'] == 'huge_topic':
             bridge_node = Huge_data_Connector(
                 platform=config.get('platform', os.getenv('PLATFORM')),
                 ros_topic=config['ros_topic'],
@@ -35,7 +35,7 @@ class ROSConnectorManager:
                 mode=config['mode'],
                 gstreamer_base_uri=f"{os.getenv('MEDIA_HOST')}:{os.getenv('MEDIA_PORT')}"
             )
-        elif config['type']== 'service':
+        if config['type']== 'service':
             bridge_node=Service_Connector(
                 broker_host=os.getenv('BROKER_HOST'),
                 broker_port=int(os.getenv('BROKER_PORT')),
@@ -81,20 +81,20 @@ def main():
     # bridges_config 예시 파일
     
     # bridges_config=[
-    # #         {
-    # #             "type": "short_topic",
-    # #             "ros_topic": "/example/short_topic",
-    # #             "ros_type": "std_msgs/msg/String",
-    # #             "mode": "pub",
-    # #             "platform": "edge"
-    # #         },
-    # #         {
-    # #             "type": "huge_topic",
-    # #             "ros_topic": "/example/huge_topic",
-    # #             "ros_type": "sensor_msgs/msg/Image",
-    # #             "mode": "sub",
-    # #             "platform": "edge"
-    # #         },
+    #         {
+    #             "type": "short_topic",
+    #             "ros_topic": "/example/short_topic",
+    #             "ros_type": "std_msgs/msg/String",
+    #             "mode": "pub",
+    #             "platform": "edge"
+    #         },
+    #         {
+    #             "type": "huge_topic",
+    #             "ros_topic": "/example/huge_topic",
+    #             "ros_type": "sensor_msgs/msg/Image",
+    #             "mode": "sub",
+    #             "platform": "edge"
+    #         },
     #         {
     #             "type": "service",
     #             "ros_service": "empty_service",
