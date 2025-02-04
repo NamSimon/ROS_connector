@@ -27,7 +27,7 @@ class Huge_data_Connector(Node):
         self.gstreamer_sender = None
         self.gstreamer_receiver = None
         self.should_stop = threading.Event()
-
+        self.get_logger().info("GStreamer 파이프라인 생성 ready")
         # GStreamer 파이프라인 설정
         self.create_gstreamer_pipeline()
         self.get_logger().info("GStreamer 파이프라인 생성 완료")
@@ -53,6 +53,7 @@ class Huge_data_Connector(Node):
                 self.get_logger().info("Success")
 
     def create_gstreamer_pipeline(self):
+        self.get_logger().info("GStreamer 파이프라인 생성 중1")
         if self.platform == 'edge':
             if self.mode == 'sub':
                 self.setup_gstreamer_sender()
@@ -62,6 +63,7 @@ class Huge_data_Connector(Node):
             if self.mode == 'pub':
                 self.setup_gstreamer_sender()
             elif self.mode == 'sub':
+                self.get_logger().info("GStreamer 파이프라인 생성 중2")
                 self.setup_gstreamer_receiver()
 
     def setup_gstreamer_sender(self):
@@ -71,6 +73,7 @@ class Huge_data_Connector(Node):
         self.gstreamer_sender.start_pipeline()
 
     def setup_gstreamer_receiver(self):
+        self.get_logger().info("GStreamer 파이프라인 생성 중3")
         self.gstreamer_uri = f'srt://{self.gstreamer_base_uri}?streamid=live.sls/live{self.ros2gstreamer_ros_topic}'
         self.gstreamer_receiver = GStreamerReceiver(self.gstreamer_uri)
         self.gstreamer_receiver.start_pipeline()
