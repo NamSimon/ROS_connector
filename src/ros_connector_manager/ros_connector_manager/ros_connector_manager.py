@@ -21,7 +21,6 @@ class ROSConnectorManager:
             bridge_node = Short_Topic_Connector(
                 broker_host=os.getenv('BROKER_HOST'),
                 broker_port=int(os.getenv('BROKER_PORT')),
-                platform=config.get('platform', os.getenv('PLATFORM')),
                 ros_topic=config['ros_topic'],
                 ros_type=config['ros_type'],
                 mode=config['mode']
@@ -29,7 +28,6 @@ class ROSConnectorManager:
         # Huge_data_Connector 노드 생성
         if config['type'] == 'huge_topic':
             bridge_node = Huge_data_Connector(
-                platform=config.get('platform', os.getenv('PLATFORM')),
                 ros_topic=config['ros_topic'],
                 ros_type=config['ros_type'],
                 mode=config['mode'],
@@ -39,7 +37,6 @@ class ROSConnectorManager:
             bridge_node=Service_Connector(
                 broker_host=os.getenv('BROKER_HOST'),
                 broker_port=int(os.getenv('BROKER_PORT')),
-                platform=config.get('platform', os.getenv('PLATFORM')),
                 ros_service=config['ros_service'],
                 ros_type=config['ros_type'],
                 mode=config['mode']
