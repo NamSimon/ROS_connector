@@ -4,7 +4,7 @@ from short_topic_connector.short_topic_connector import Short_Topic_Connector
 from huge_data_connector.huge_data_connector import Huge_data_Connector  # Assuming this is in a file called huge_data_connector.py
 from service_connector.service_connector import Service_Connector
 import os
-import ast  # JSON 대신 Python 형식 문자열 파싱용
+import json
 
 class ROSConnectorManager:
     def __init__(self, bridges_config):
@@ -69,12 +69,13 @@ def main():
     if not bridges_config_str:
         raise ValueError("ROS_CONFIG 환경 변수가 설정되지 않았습니다.")
 
-    # Python 형식 문자열을 파싱
+    # JSON 형식 문자열을 파싱
     try:
-        bridges_config = ast.literal_eval(bridges_config_str)  # JSON 대신 Python 파싱
-    except (ValueError, SyntaxError) as e:
+        bridges_config = json.loads(bridges_config_str)  # JSON 파싱
+    except json.JSONDecodeError as e:
         print(f"ROS_CONFIG 값: {bridges_config_str}")
-        raise ValueError(f"ROS_CONFIG 파싱 에러: {e}")
+        raise ValueError(f"ROS_CONFIG JSON 파싱 에러: {e}")
+
     # bridges_config 예시 파일
     
     # bridges_config=[
