@@ -74,6 +74,7 @@ class Huge_data_Connector(Node):
 
     def setup_gstreamer_receiver(self):
         self.get_logger().info("GStreamer 파이프라인 생성 중3")
+        # without sendside this don't connect
         self.gstreamer_uri = f'srt://{self.gstreamer_base_uri}?streamid=live.sls/live{self.ros2gstreamer_ros_topic}'
         self.gstreamer_receiver = GStreamerReceiver(self.gstreamer_uri)
         self.gstreamer_receiver.start_pipeline()
