@@ -1,6 +1,5 @@
-<<<<<<< HEAD
-import cv2
-=======
+
+
 # import subprocess
 # import numpy as np
 
@@ -82,7 +81,7 @@ import cv2
 import subprocess
 import numpy as np
 import cv2  # OpenCV 추가
->>>>>>> 438a055 (2025.02.06)
+
 
 class GStreamerSender:
     def __init__(self, gstreamer_uri, width=640, height=480, fps=30):
@@ -93,7 +92,7 @@ class GStreamerSender:
         self.video_writer = None
 
     def start_pipeline(self):
-<<<<<<< HEAD
+
         gst_pipeline = (
             f"appsrc ! "
             f"videoconvert ! "
@@ -125,7 +124,7 @@ class GStreamerSender:
             self.video_writer.write(resized_frame)
         else:
             print("Error: VideoWriter is not opened.")
-=======
+
         """GStreamer 송신 파이프라인을 시작합니다."""
         gstreamer_command = [
             'gst-launch-1.0', '-v',
@@ -157,7 +156,7 @@ class GStreamerSender:
                 self.gstreamer_process.stdin.flush()  # 버퍼 비우기
         except Exception as e:
             print(f"GStreamer로 이미지 전송 실패: {e}")
->>>>>>> 438a055 (2025.02.06)
+
 
     def stop(self):
         if self.video_writer:
@@ -173,7 +172,7 @@ class GStreamerReceiver:
         self.video_capture = None
 
     def start_pipeline(self):
-<<<<<<< HEAD
+
         gst_pipeline = (
             f"srtsrc uri={self.gstreamer_uri} ! "
             f"tsdemux ! h264parse ! avdec_h264 ! "
@@ -200,7 +199,7 @@ class GStreamerReceiver:
         if self.video_capture:
             self.video_capture.release()
             print("GStreamer receiver pipeline stopped.")
-=======
+
         """GStreamer 수신 파이프라인을 시작합니다."""
         gstreamer_command = [
             'gst-launch-1.0', '-v',
@@ -234,4 +233,3 @@ class GStreamerReceiver:
         """GStreamer 수신 파이프라인을 종료."""
         if self.gstreamer_process:
             self.gstreamer_process.terminate()
->>>>>>> 438a055 (2025.02.06)
