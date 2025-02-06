@@ -125,7 +125,7 @@ class GStreamerSender:
         else:
             print("Error: VideoWriter is not opened.")
 
-        """GStreamer 송신 파이프라인을 시작합니다."""
+        print("GStreamer 송신 파이프라인을 시작합니다.")
         gstreamer_command = [
             'gst-launch-1.0', '-v',
             'appsrc', 'format=GST_FORMAT_TIME', 'is-live=true', 'block=true',
