@@ -20,7 +20,11 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+<<<<<<< HEAD:src/ros_connector_manager/setup.py
             'ros_connector_manager = ros_connector_manager.ros_connector_manager:main',
+=======
+             'ROS_connector = ros_bridge_manager.ros_bridge_manager:main',
+>>>>>>> 209eb5f (로컬 변경 사항 커밋):src/ros_bridge_manager/setup.py
         ],
     },
 )
