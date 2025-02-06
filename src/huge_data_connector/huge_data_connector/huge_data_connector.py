@@ -124,6 +124,7 @@ class Huge_data_Connector(Node):
 
     def ros_to_gstreamer_callback(self, msg):
         cv_image = self.ros_msg_to_opencv(msg)
+        cv_image = cv2.resize(cv_image, (480,640))
         if cv_image is not None and self.gstreamer_sender:
             try:
                 self.gstreamer_sender.send_frame(cv_image)
